@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小學古詩20首｜詩體分類與小遊戲</title>
+  <meta name="description" content="小學古詩20首分類：五言絕句、七言絕句、五言律詩、七言律詩。附互動拖拽小遊戲與詩卡展示。">
+  <style>
+    :root{
+      --bg:#fff8f0;
+      --card:#ffffff;
+      --ink:#2f2840;
+      --accent:#ff7aa2;
+      --accent-2:#6cc0ff;
+      --good:#19b36b;
+      --bad:#e45757;
+      --soft:#f2ecff;
+      --border:#e8d9ff;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "Helvetica Neue", Arial, "PingFang HK", "Microsoft JhengHei", sans-serif}
+    a{color:var(--accent)}
+    header{
+      background:linear-gradient(135deg,var(--soft),#ffe3ea 60%, #e9f6ff);
+      padding:24px 16px;border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:10
+    }
+    header h1{margin:0;font-size:24px}
+    header p{margin:6px 0 0;font-size:14px;opacity:.85}
+    main{max-width:1100px;margin:20px auto;padding:0 16px}
+    section{margin:24px 0}
+    h2{font-size:20px;margin:0 0 12px}
+    .grid{
+      display:grid;grid-template-columns:repeat(12,1fr);gap:16px
+    }
+    @media (max-width:900px){.grid{grid-template-columns:repeat(6,1fr)}}
+    @media (max-width:600px){.grid{grid-template-columns:repeat(1,1fr)}}
+
+    .card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:14px;padding:14px;box-shadow:0 3px 10px rgba(0,0,0,.05)
+    }
+    .poem-card{
+      user-select:none;cursor:grab
+    }
+    .poem-card.dragging{opacity:.7;transform:rotate(1deg) scale(.98)}
+    .poem-title{font-weight:700}
+    .poem-meta{font-size:12px;opacity:.8;margin-bottom:8px}
+    .poem-text{font-family:"Noto Serif TC","Songti SC","KaiTi","STKaiti",serif;line-height:1.9;font-size:16px;margin-top:6px}
+    .pill{
+      display:inline-block;background:#fff;border:1px dashed var(--border);
+      border-radius:999px;padding:2px 8px;font-size:12px;margin-right:6px
+    }
+    .wrap{display:flex;gap:16px;flex-wrap:wrap}
+    .bucket{
+      min-height:180px;border:2px dashed var(--border);border-radius:14px;
+      background: #fcfbff;transition:.2s;position:relative;overflow:hidden
+    }
+    .bucket:hover{border-color:#cdb9ff}
+    .bucket h3{
+      margin:10px;font-size:16px
+    }
+    .bucket .hint{position:absolute;right:10px;top:10px;font-size:11px;opacity:.6}
+    .bucket.active{background:#f5f1ff;border-color:#b79cff}
+    .bucket.correct{border-color:var(--good);background:#f1fff7}
+    .bucket.wrong{border-color:var(--bad);background:#fff3f3}
+    .bucket-content{padding:10px;display:flex;gap:10px;flex-wrap:wrap}
+    .toolbar{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .btn{
+      border:none;background:var(--accent);color:white;padding:10px 14px;
+      border-radius:10px;cursor:pointer;font-weight:700
+    }
+    .btn.secondary{background:var(--accent-2);color:#05344e}
+    .btn.ghost{background:#fff;border:1px solid var(--border);color:#444}
+    .score{
+      padding:10px 14px;border-radius:10px;background:#fff;border:1px solid var(--border)
+    }
+    details summary{cursor:pointer;font-weight:700}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+    .legend .tag{background:#f7f7ff;border:1px solid var(--border);padding:4px 8px;border-radius:999px;font-size:12px}
+    footer{padding:30px;color:#666;font-size:12px;text-align:center}
+    .small{font-size:12px;opacity:.8}
+    .category-chip{
+      display:inline-block;background:#ffeff6;border:1px solid #ffc7db;color:#832a4b;
+      padding:2px 8px;border-radius:999px;font-size:12px
+    }
+    .result-list{margin-top:8px}
+    .result-item{padding:8px;border-bottom:1px dashed #eee}
+    .result-item .ok{color:var(--good);font-weight:700}
+    .result-item .ng{color:var(--bad);font-weight:700}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>小學古詩20首｜詩體分類與互動小遊戲</h1>
+    <p>把古詩分到「五言絕句」「七言絕句」「五言律詩」「七言律詩」四類。拖拽詩卡到分類欄，按「提交答案」看分數與解析。</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>玩法說明</h2>
+      <div class="card">
+        <div class="legend">
+          <span class="tag">五言＝每句5字｜七言＝每句7字</span>
+          <span class="tag">絕句＝4句｜律詩＝8句（近體）</span>
+          <span class="tag">提示：先數字數，再數句數</span>
+        </div>
+        <p class="small">註：詩選以小學常見版本為參考，供學習與遊戲之用。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>詩卡（可拖拽）</h2>
+      <div id="poemPool" class="grid"></div>
+      <div class="toolbar">
+        <button class="btn secondary" id="shuffleBtn">重新洗牌</button>
+        <button class="btn ghost" id="resetBtn">重置到未分類</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>分類欄</h2>
+      <div class="grid">
+        <div class="bucket card" data-bucket="五言絕句">
+          <h3>五言絕句 <span class="hint">4句｜每句5字</span></h3>
+          <div class="bucket-content" id="bucket-五言絕句"></div>
+        </div>
+        <div class="bucket card" data-bucket="七言絕句">
+          <h3>七言絕句 <span class="hint">4句｜每句7字</span></h3>
+          <div class="bucket-content" id="bucket-七言絕句"></div>
+        </div>
+        <div class="bucket card" data-bucket="五言律詩">
+          <h3>五言律詩 <span class="hint">8句｜每句5字</span></h3>
+          <div class="bucket-content" id="bucket-五言律詩"></div>
+        </div>
+        <div class="bucket card" data-bucket="七言律詩">
+          <h3>七言律詩 <span class="hint">8句｜每句7字</span></h3>
+          <div class="bucket-content" id="bucket-七言律詩"></div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn" id="submitBtn">提交答案</button>
+        <div class="score" id="scoreBox">尚未評分</div>
+      </div>
+      <details id="resultDetails">
+        <summary>查看詳解</summary>
+        <div id="resultList" class="result-list"></div>
+      </details>
+    </section>
+
+    <section>
+      <h2>全部古詩（20首）</h2>
+      <div id="catalog" class="grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    版面與資料僅用於學習與教學。© 你在 GitHub 的倉庫。可自由修改增補。
+  </footer>
+
+  <script>
+    // 資料集：20首，含標準分類
+    const POEMS = [
+      // 五言絕句（8）
+      {
+        id:"p1", title:"靜夜思", author:"李白", category:"五言絕句",
+        lines:["床前明月光","疑是地上霜","舉頭望明月","低頭思故鄉"]
+      },
+      {
+        id:"p2", title:"春曉", author:"孟浩然", category:"五言絕句",
+        lines:["春眠不覺曉","處處聞啼鳥","夜來風雨聲","花落知多少"]
+      },
+      {
+        id:"p3", title:"相思", author:"王維", category:"五言絕句",
+        lines:["紅豆生南國","春來發幾枝","願君多采擷","此物最相思"]
+      },
+      {
+        id:"p4", title:"鹿柴", author:"王維", category:"五言絕句",
+        lines:["空山不見人","但聞人語響","返景入深林","復照青苔上"]
+      },
+      {
+        id:"p5", title:"江雪", author:"柳宗元", category:"五言絕句",
+        lines:["千山鳥飛絕","萬徑人蹤滅","孤舟蓑笠翁","獨釣寒江雪"]
+      },
+      {
+        id:"p6", title:"逢雪宿芙蓉山主人", author:"劉長卿", category:"五言絕句",
+        lines:["日暮蒼山遠","天寒白屋貧","柴門聞犬吠","風雪夜歸人"]
+      },
+      {
+        id:"p7", title:"送別", author:"王維", category:"五言絕句",
+        lines:["山中相送罷","日暮掩柴扉","春草年年綠","王孫歸不歸"]
+      },
+      {
+        id:"p8", title:"雜詩", author:"王維", category:"五言絕句",
+        lines:["君自故鄉來","應知故鄉事","來日綺窗前","寒梅著花未"]
+      },
+
+      // 七言絕句（8）
+      {
+        id:"p9", title:"登鸛雀樓", author:"王之涣", category:"七言絕句",
+        lines:["白日依山盡","黃河入海流","欲窮千里目","更上一層樓"]
+      },
+      {
+        id:"p10", title:"山行", author:"杜牧", category:"七言絕句",
+        lines:["遠上寒山石徑斜","白雲生處有人家","停車坐愛楓林晚","霜葉紅於二月花"]
+      },
+      {
+        id:"p11", title:"清明", author:"杜牧", category:"七言絕句",
+        lines:["清明時節雨紛紛","路上行人欲斷魂","借問酒家何處有","牧童遙指杏花村"]
+      },
+      {
+        id:"p12", title:"贈汪倫", author:"李白", category:"七言絕句",
+        lines:["李白乘舟將欲行","忽聞岸上踏歌聲","桃花潭水深千尺","不及汪倫送我情"]
+      },
+      {
+        id:"p13", title:"黃鶴樓送孟浩然之廣陵", author:"李白", category:"七言絕句",
+        lines:["故人西辭黃鶴樓","煙花三月下揚州","孤帆遠影碧空盡","唯見長江天際流"]
+      },
+      {
+        id:"p14", title:"望廬山瀑布", author:"李白", category:"七言絕句",
+        lines:["日照香爐生紫煙","遙看瀑布掛前川","飛流直下三千尺","疑是銀河落九天"]
+      },
+      {
+        id:"p15", title:"絕句", author:"杜甫", category:"七言絕句",
+        lines:["兩個黃鸝鳴翠柳","一行白鷺上青天","窗含西嶺千秋雪","門泊東吳萬里船"]
+      },
+      {
+        id:"p16", title:"江畔獨步尋花（其五）", author:"杜甫", category:"七言絕句",
+        lines:["黃四娘家花滿蹊","千朵萬朵壓枝低","留連戲蝶時時舞","自在嬌鶯恰恰啼"]
+      },
+
+      // 五言律詩（3）
+      {
+        id:"p17", title:"春望", author:"杜甫", category:"五言律詩",
+        lines:["國破山河在","城春草木深","感時花濺淚","恨別鳥驚心","烽火連三月","家書抵萬金","白頭掻更短","渾欲不勝簪"]
+      },
+      {
+        id:"p18", title:"山居秋暝", author:"王維", category:"五言律詩",
+        lines:["空山新雨後","天氣晚來秋","明月松間照","清泉石上流","竹喧歸浣女","蓮動下漁舟","隨意春芳歇","王孫自可留"]
+      },
+      {
+        id:"p19", title:"使至塞上", author:"王維", category:"五言律詩",
+        lines:["單車欲問邊","屬國過居延","征蓬出漢塞","歸雁入胡天","大漠孤煙直","長河落日圓","蕭關逢候騎","都護在燕然"]
+      },
+
+      // 七言律詩（1）
+      {
+        id:"p20", title:"登高", author:"杜甫", category:"七言律詩",
+        lines:["風急天高猿嘯哀","渚清沙白鳥飛回","無邊落木蕭蕭下","不盡長江滾滾來","萬里悲秋常作客","百年多病獨登臺","艱難苦恨繁霜鬢","潦倒新停濁酒杯"]
+      }
+    ];
+
+    // 狀態：每首詩目前被拖到哪個桶；null 表示未分類
+    const placement = Object.fromEntries(POEMS.map(p=>[p.id,null]));
+
+    // DOM 參考
+    const poolEl = document.getElementById('poemPool');
+    const catalogEl = document.getElementById('catalog');
+    const buckets = {
+      "五言絕句": document.getElementById('bucket-五言絕句'),
+      "七言絕句": document.getElementById('bucket-七言絕句'),
+      "五言律詩": document.getElementById('bucket-五言律詩'),
+      "七言律詩": document.getElementById('bucket-七言律詩')
+    };
+    const submitBtn = document.getElementById('submitBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const scoreBox = document.getElementById('scoreBox');
+    const resultDetails = document.getElementById('resultDetails');
+    const resultList = document.getElementById('resultList');
+
+    // 生成詩卡
+    function makePoemCard(poem){
+      const card = document.createElement('div');
+      card.className = 'card poem-card';
+      card.draggable = true;
+      card.id = 'card-' + poem.id;
+      card.innerHTML = `
+        <div class="poem-title">${poem.title}</div>
+        <div class="poem-meta">${poem.author} · <span class="pill">句數：${poem.lines.length}</span> <span class="pill">示例：${poem.lines[0].length}字/句</span></div>
+        <div class="poem-text">${poem.lines.join('<br/>')}</div>
+        <div class="legend"><span class="category-chip">正解類別：遊戲提交後顯示</span></div>
+      `;
+      // 拖拽事件
+      card.addEventListener('dragstart', e=>{
+        card.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', poem.id);
+      });
+      card.addEventListener('dragend', ()=>{
+        card.classList.remove('dragging');
+      });
+      return card;
+    }
+
+    // 渲染池與目錄
+    function renderPool(order = POEMS){
+      poolEl.innerHTML = '';
+      order.forEach(p=>{
+        if(placement[p.id]===null){
+          poolEl.appendChild(makePoemCard(p));
+        }
+      });
+    }
+    function renderCatalog(){
+      catalogEl.innerHTML = '';
+      POEMS.forEach(p=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="poem-title">${p.title}</div>
+          <div class="poem-meta">${p.author} · <span class="pill">${p.category}</span></div>
+          <div class="poem-text">${p.lines.join('<br/>')}</div>
+        `;
+        catalogEl.appendChild(card);
+      });
+    }
+
+    // 桶拖拽行為
+    document.querySelectorAll('.bucket').forEach(bucketEl=>{
+      bucketEl.addEventListener('dragover', e=>{
+        e.preventDefault();
+        bucketEl.classList.add('active');
+      });
+      bucketEl.addEventListener('dragleave', ()=>{
+        bucketEl.classList.remove('active');
+      });
+      bucketEl.addEventListener('drop', e=>{
+        e.preventDefault();
+        bucketEl.classList.remove('active');
+        const id = e.dataTransfer.getData('text/plain');
+        const poem = POEMS.find(x=>x.id===id);
+        // 更新狀態
+        placement[id] = bucketEl.dataset.bucket;
+        // 加到桶中
+        const card = document.getElementById('card-'+id);
+        if(card){
+          buckets[bucketEl.dataset.bucket].appendChild(card);
+        }
+      });
+    });
+
+    // 提交評分
+    submitBtn.addEventListener('click', ()=>{
+      let correct = 0, total = POEMS.length;
+      resultList.innerHTML = '';
+      // 清桶狀態色
+      document.querySelectorAll('.bucket').forEach(b=>{b.classList.remove('correct','wrong')});
+
+      POEMS.forEach(p=>{
+        const chosen = placement[p.id];
+        const ok = (chosen === p.category);
+        if(ok) correct++;
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <div><strong>${p.title}</strong>（${p.author}）</div>
+          <div>你的答案：${chosen ? chosen : '未分類'} · 正確答案：<span>${p.category}</span>
+             · 結構：${p.lines.length}句，每句${p.lines[0].length}字</div>
+          <div>${ok ? '<span class="ok">✔ 正確</span>' : '<span class="ng">✘ 錯誤</span>'}</div>
+        `;
+        resultList.appendChild(item);
+      });
+
+      scoreBox.textContent = `得分：${correct} / ${total}`;
+      resultDetails.open = true;
+
+      // 依正確率標示桶（僅作視覺提示）
+      Object.keys(buckets).forEach(cat=>{
+        const idsInBucket = Array.from(buckets[cat].querySelectorAll('.poem-card')).map(el=>el.id.replace('card-',''));
+        const okCount = idsInBucket.filter(id=>{
+          const p = POEMS.find(x=>x.id===id);
+          return p && p.category===cat;
+        }).length;
+        const wrongCount = idsInBucket.length - okCount;
+        const el = buckets[cat].parentElement;
+        el.classList.remove('correct','wrong');
+        if(idsInBucket.length){
+          el.classList.add(wrongCount===0 ? 'correct' : 'wrong');
+        }
+      });
+    });
+
+    // 洗牌與重置
+    function shuffle(array){
+      const a = array.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+    shuffleBtn.addEventListener('click', ()=>{
+      renderPool(shuffle(POEMS));
+    });
+    resetBtn.addEventListener('click', ()=>{
+      // 狀態重置
+      Object.keys(placement).forEach(id=>placement[id]=null);
+      // 移回池
+      Object.values(buckets).forEach(b=>{
+        const nodes = Array.from(b.querySelectorAll('.poem-card'));
+        nodes.forEach(card=>poolEl.appendChild(card));
+      });
+      // UI清理
+      scoreBox.textContent = '尚未評分';
+      resultList.innerHTML = '';
+      resultDetails.open = false;
+      document.querySelectorAll('.bucket').forEach(b=>{b.classList.remove('correct','wrong')});
+    });
+
+    // 初始渲染
+    renderPool(shuffle(POEMS));
+    renderCatalog();
+  </script>
+</body>
+</html>
